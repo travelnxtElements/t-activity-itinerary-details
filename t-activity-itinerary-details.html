@@ -7,7 +7,7 @@
 <!--
     <h3>Details:</h3>
 
-        `t-activity-itinerary-details` is a view component used to display selected car details.
+        `t-activity-itinerary-details` is a view component used to display selected activity details.
         `t-activity-itinerary-details-page` component integrates this component with api components
 
     <h3>Events:</h3>
@@ -19,7 +19,7 @@
     <h3>Example:</h3>
 
         <t-activity-itinerary-details 
-            car-icon="[[carIcon]]" 
+            activity-icon="[[activityIcon]]" 
             id="itineraryView">
         </t-activity-itinerary-details>
 
@@ -42,8 +42,6 @@
             <div class="left-section flex">
                 <div class="font-16 item">[[itinerary.name]]</div>
                 <div class="font-12 item">[[itinerary.category.name]]</div>
-                <div class="font-16 item">[[itinerary.options.0.name]]</div>
-                <div class="font-12 item">[[itinerary.options.0.selectedDateTime.date]]</div>
             </div>
             <template is="dom-if" if="[[isCollapsible]]">
                 <div class="right-section">
@@ -52,8 +50,10 @@
                 </div>
             </template>            
         </div>
-        <iron-collapse  id="carDetailsCollapse" opened$="[[_openActivityCollapse]]">
+        <iron-collapse  id="activityDetailsCollapse" opened$="[[_openActivityCollapse]]">
             <div class="collapse-content">
+                <div class="font-16 item">[[itinerary.options.0.name]]</div>
+                <div class="font-12 item">[[itinerary.options.0.selectedDateTime.date]]</div>
                 <div class="secondary-text font-12">
                   <div class="section-small">
                       <a class="link-style" on-tap="_policyClick">Policy</a>
@@ -72,13 +72,13 @@
                 is: 't-activity-itinerary-details',
 
                 behaviors: [
-                  TravelNxt.Behaviors.DateBehavior
+                    TravelNxt.Behaviors.DateBehavior
                 ],
 
                 properties: {
 
                     /*
-                    * <p>This property holds the value of selected car itinerary</p>
+                    * <p>This property holds the value of selected activity itinerary</p>
                     */
                     itinerary: {
                       type: Object

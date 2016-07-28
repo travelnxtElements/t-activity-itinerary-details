@@ -14,9 +14,11 @@
         "t-text-container": "travelnxtelements/t-text-container#^1.1.1",
         "juicy-html": "Juicy/juicy-html#^1.0.2",
         "t-car-result-item": "travelnxtElements/t-car-result-item#^1.0.0",
+        "t-car-itinerary-details": "travelnxtElements/t-car-itinerary-details#^1.0.0",
         "iron-collapse": "PolymerElements/iron-collapse#^1.2.0"
     },
     "devDependencies": {
+        "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
         "web-component-tester": "^4.0.0",
         "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0",
         "t-shared-components": "atomelements/t-shared-components#^1.0.5"

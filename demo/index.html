@@ -5,7 +5,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
         <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-        <link rel="import" href="../t-activity-itinerary-details.html">
+        <link rel="import" href="../t-activity-itinerary-details-page.html">
         <link rel="import" href="../../t-shared-components/theme.html">
 
         <style>
@@ -22,19 +22,45 @@
     </head>
     <body>
         <template is="dom-bind" id="domBindTemplate">
-            <t-activity-itinerary-details id="itineraryDetails">
-            </t-activity-itinerary-details>
+            <t-activity-itinerary-details-page id="activityItineraryDetails"
+                api-base-url="http://demo.travelnxt.com/"
+                auth-token="deiieao2tu1iacmrqdxmsyaq"
+                car-icon="maps:directions-car"
+                search-id="c8fa1e18-2e7d-4d30-813b-89c57bea4a4d">
+                <t-header icon="arrow-back" normal-heading label="Review Itinerary"  url="#">
+                    <t-car-search-recap id="searchCriteriaRecap"></t-car-search-recap>
+                </t-header>
+            </t-activity-itinerary-details-page>
         </template>
     </body>
 
     <script type="text/javascript">
+
         (function() {
 
             window.addEventListener('WebComponentsReady', function(e) {
                 var template = document.getElementById('domBindTemplate');
-                template.$.itineraryDetails.searchCriteria = searchCriteria;
-                template.$.itineraryDetails.setDetails(itinerary, searchCriteria);
+                template.$.activityItineraryDetails.searchCriteria = searchCriteria;
+                template.$.activityItineraryDetails.itinerary = itinerary;
+                template.$.activityItineraryDetails.itineraryId = itinerary.id;
+                template.$.activityItineraryDetails.optionId = "SIC.5859LVMON__1_1D_UNL";
+                template.$.activityItineraryDetails.passengers = passengers;
+                template.$.searchCriteriaRecap.data = searchCriteria;
             });
+
+            var passengers = [{
+                type: "Adult",
+                count: 1
+            }, {
+                type: "Child",
+                count: 0
+            }, {
+                type: "Infant",
+                count: 0
+            }, {
+                type: "Senior",
+                count: 0
+            }];
 
             var itinerary = {
                 "description": "<p>See all of the Las Vegas Strip in a fast, easy, convenient way &ndash; aboard the Las Vegas Monorail. Enjoy unlimited rides directly to the MGM Grand, Paris Las Vegas, Caesars Palace and more with your 1- to 7-day ticket.</p><p>With your choice of a 1- to 7-day ticket, enjoy unlimited rides on the Las Vegas Monorail to experience the best of the Las Vegas Strip. This quick, convenient, reliable form of transportation delivers you to several resorts and attractions along the Strip including the MGM Grand, Bally&rsquo;s, Paris Las Vegas, Flamingo, Caesars Palace, Harrah&rsquo;s Las Vegas and the Las Vegas Convention Center. <br /><br />These fully automated electric trains travel up to 50 mph (80 kph), getting you to your destination quickly and easily. Trains arrive every few minutes at each of the seven stations.<br /><br />Hop on the Las Vegas Monorail and any of the following stations: <br />\n<ul>\n<li>MGM Grand</li>\n<li>Bally's/Paris Las Vegas</li>\n<li>Flamingo</li>\n<li>Harrah's Las Vegas/The LINQ Hotel</li>\n<li>Las Vegas Convention Center</li>\n<li>Westgate Las Vegas (formally the Las Vegas Hotel)</li>\n<li>SLS (formally Sahara Avenue)</li>\n</ul>\n<br /><strong>Please note</strong>: Service is NOT available to the airport.</p><p><b><span class=\"vSpecial\">Special Offer - Travel through December 31, 2016 and save 20% compared to the local supplier's prices for a 2-day pass! - BOOK NOW!</span></b></p>",
@@ -79,14 +105,14 @@
                     "isQuantifiable": true,
                     "window": {
                         "start": {
-                            "date": "Wed, 27 Jul, 2016",
-                            "time": "11:09 AM",
-                            "systemDateTime": "2016-07-27T11:09:39.8259401-04:00"
+                            "date": "Thu, 28 Jul, 2016",
+                            "time": "7:02 AM",
+                            "systemDateTime": "2016-07-28T07:02:43.3760405-04:00"
                         },
                         "end": {
-                            "date": "Mon, 22 Aug, 2016",
+                            "date": "Tue, 23 Aug, 2016",
                             "time": "12:00 AM",
-                            "systemDateTime": "2016-08-22T00:00:00"
+                            "systemDateTime": "2016-08-23T00:00:00"
                         }
                     },
                     "penalty": {
@@ -123,14 +149,14 @@
                     "isQuantifiable": true,
                     "window": {
                         "start": {
-                            "date": "Mon, 22 Aug, 2016",
+                            "date": "Tue, 23 Aug, 2016",
                             "time": "12:00 AM",
-                            "systemDateTime": "2016-08-22T00:00:00"
+                            "systemDateTime": "2016-08-23T00:00:00"
                         },
                         "end": {
-                            "date": "Wed, 24 Aug, 2016",
+                            "date": "Thu, 25 Aug, 2016",
                             "time": "12:00 AM",
-                            "systemDateTime": "2016-08-24T00:00:00"
+                            "systemDateTime": "2016-08-25T00:00:00"
                         }
                     },
                     "penalty": {
@@ -178,11 +204,19 @@
                         "date": "Thu, 25 Aug, 2016",
                         "time": "12:00 AM",
                         "systemDateTime": "2016-08-25T00:00:00"
+                    }, {
+                        "date": "Fri, 26 Aug, 2016",
+                        "time": "12:00 AM",
+                        "systemDateTime": "2016-08-26T00:00:00"
+                    }, {
+                        "date": "Sat, 27 Aug, 2016",
+                        "time": "12:00 AM",
+                        "systemDateTime": "2016-08-27T00:00:00"
                     }],
                     "selectedDateTime": {
-                        "date": "Wed, 24 Aug, 2016",
+                        "date": "Thu, 25 Aug, 2016",
                         "time": "12:00 AM",
-                        "systemDateTime": "2016-08-24T00:00:00"
+                        "systemDateTime": "2016-08-25T00:00:00"
                     },
                     "passengerTypesInfo": [{
                         "fare": {
@@ -412,7 +446,7 @@
                 "isCancellable": true,
                 "allPassengersInfoRequired": true,
                 "isGuaranteeRequired": true,
-                "id": "DACD31B335C67B02F172B2A686D5C91A",
+                "id": "37798E202E88E9F75B29332FB24B2FD1",
                 "name": "Las Vegas Monorail Ticket",
                 "fare": {
                     "type": null,
@@ -655,7 +689,7 @@
                 "dropoffTime": "11:00 AM"
             };
         })();
-    </script>
 
+    </script>
 
 </html>
