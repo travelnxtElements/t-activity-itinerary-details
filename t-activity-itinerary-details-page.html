@@ -72,6 +72,10 @@
                 display: block;
             }
 
+            .item{
+                padding: 10px 0;
+            }
+
             #btnContinue{
                 display: block;
                 margin: var(--normal-spacing,10px);
@@ -119,9 +123,19 @@
         </t-activity-itinerary-details>
 
         <t-faredetails 
-          id="fareDetails"
-          is-collapsible
-          itinerary-fare-label="Activity Rental">
+            id="fareDetails"
+            is-collapsible
+            passenger-details="[[passengers]]"
+            itinerary-fare-label="Selected Option Rate">
+            <div class="passenger-fare-components">
+                <template is="dom-repeat" items="[[_passengerFares]]">
+                    <div class="layout horizontal item border-bottom baseFare">
+                        <span class="secondary-text">[[item.label]]</span>
+                        <span class="flex"></span>
+                        <span>[[item.currency]] [[item.fare]]</span>
+                    </div>                    
+                </template>
+            </div>
         </t-faredetails>
 
         <t-button 
@@ -346,11 +360,59 @@
                         return;
                     }
 
-                    this.$.fareDetails.baseFareLabel = 'Avg. per day rate x ' + this._dateDiff(this.searchCriteria.pickupDate, this.searchCriteria.dropoffDate);
-
                     if (this.itinerary.fare && this.itinerary.fare.components) {
-                        this.$.fareDetails.data = this.itinerary.fare.components;
+                        this.$.fareDetails.data = this.itinerary.fare.components.filter(function (item) {
+                            return item.type.toLowerCase() !== 'basefare';
+                        });
+
+                        this._buildFareComponents();
                     }
+                },
+
+                /*
+                 * <p>Builds fare components to include passenger-wise prices as per passenger counts provided while pricing</p>
+                */
+                _buildFareComponents: function () {
+                    if (!this.itinerary.options || !this.itinerary.options.length) {
+                        return;
+                    }
+
+                    var paxInfo = this.itinerary.options[0].passengerTypesInfo;
+
+                    var passengerFares = [];
+
+                    for (var i = 0; i < paxInfo.length; i++) {
+
+                        if (paxInfo[i].passengerType.toLowerCase() === 'youth') {
+                            continue;
+                        }
+
+                        var baseFare = paxInfo[i].fare.components.find(function (item) {
+                            return item.type.toLowerCase() === 'basefare';
+                        });
+
+                        if (!baseFare || !this.passengers || !this.passengers.length) {
+                            continue;
+                        }
+
+                        var passenger = this.passengers.find(function (item) {
+                            return item.type.toLowerCase() === paxInfo[i].passengerType.toLowerCase();
+                        });
+
+                        if (passenger && passenger.quantity) {
+                            passenger = parseInt(passenger.quantity);
+                        }
+
+                        if (passenger) {
+                            passengerFares.push({
+                                label: paxInfo[i].passengerType + ' x ' + passenger,
+                                fare: (baseFare.money.amount * passenger).toFixed(2),
+                                currency: baseFare.money.currency
+                            });
+                        }
+                    }
+
+                    this._passengerFares = passengerFares;
                 },
 
                 /*
