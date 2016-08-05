@@ -195,8 +195,7 @@
                      * <p>This property holds the value of selected activity itinerary</p>
                      */
                     itinerary: {
-                        type: Object,
-                        notify: true
+                        type: Object
                     },
 
                     /*
@@ -336,9 +335,7 @@
                         throw Error('failed to add itinerary in the cart!');
                     }
 
-                    var addToCartItem = e.detail.addToCartItemResult[0];
-
-                    this.itinerary.fare = addToCartItem.inventory.fare;
+                    this.itinerary.fare = e.detail.addToCartItemResult[0].inventory.fare;
 
                     //set policies
                     this.$.policy.policies = this.itinerary.generalPolicies;
@@ -347,8 +344,8 @@
 
                     this.$.sessionStore.save();
 
-                    if (addToCartItem.inventory) {
-                        this.$.itineraryView.itinerary = addToCartItem.inventory;
+                    if (this.itinerary) {
+                        this.$.itineraryView.itinerary = this.itinerary;
                         this._setFareDetails();
                     }
 
@@ -449,7 +446,7 @@
 
                         if (passenger) {
                             passengerFares.push({
-                                label: paxInfo[i].passengerType + ' x ' + passenger,
+                                label: paxInfo[i].multiplePassengerType + ' x ' + passenger,
                                 fare: (baseFare.money.amount * passenger).toFixed(2),
                                 currency: baseFare.money.currency
                             });
