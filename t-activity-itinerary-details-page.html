@@ -158,6 +158,8 @@
 
             'use strict'
 
+            var paxCountMap = [];
+
             Polymer({
 
                 is: 't-activity-itinerary-details-page',
@@ -198,7 +200,7 @@
                     },
 
                     /*
-                     * <p>This property holds the value of selected activity option</p>
+                     * <p>This property holds the value of selected activity option id</p>
                      */
                     optionId: {
                         type: Object,
@@ -206,11 +208,24 @@
                     },
 
                     /*
+                     * <p>This property holds the value of selected date of selected option</p>
+                     */
+                    selectedDate: {
+                        type: String
+                    },
+
+                    /*
                      * <p>This property holds the value of passenger count selected against the selected option</p>
                      */
-                    passengers: {
-                        type: Array,
-                        notify: true
+                    paxCount: {
+                        type: Number
+                    },
+
+                    /*
+                     * <p>This property holds the value of web api URL format</p>
+                     */
+                    searchId: {
+                        type: String
                     },
 
                     /*
@@ -233,7 +248,7 @@
 
                 observers: [
                     '_visibleChange(visible)',
-                    '_addItemToCart(authToken, optionId, searchId)'
+                    '_addItemToCart(optionId, selectedDate, paxCount)'
                 ],
 
                 listeners: {
@@ -251,7 +266,7 @@
                  * <p>observer function for page `visible` property</p>
                 */
                 _visibleChange: function (visible) {
-                    if (visible && (!this.optionId || !this.searchId || !this.authToken || !this.searchCriteria)) {
+                    if (visible && (!this.optionId || !this.selectedDate || !this.paxCount)) {
                         this.fire('go-to-search');
                     }
 
@@ -260,10 +275,10 @@
                 },
 
                 /*
-                 * <p>observer function for page `authToken`, `optionId`, `searchId` property</p>
+                 * <p>observer function for page `optionId` property</p>
                 */
-                _addItemToCart: function (authToken, optionId, searchId) {
-                    if (!optionId || !searchId || !authToken || !this.searchCriteria) {
+                _addItemToCart: function (optionId, selectedDate, paxCount) {
+                    if (!optionId || !selectedDate || !paxCount) {
                         return;
                     }
 
@@ -286,16 +301,22 @@
                 onRemoveCartSuccess: function (e) {
 
                     var selectedOption = this.itinerary.options.find(function (item) {
-                        return item.id === this.optionId;
+                        return item.id.toLowerCase() === this.optionId.toLowerCase();
                     }, this);
 
-                    this.$.addCartApi.add({
-                        itineraryType: 'activity',
-                        searchId: this.searchId,
-                        itineraryId: this.itinerary.id,
-                        selectedOption: selectedOption,
-                        passengers: this.passengers
-                    });
+                    var addToCartRequest = {
+                            itemInfos: [{
+                            searchId: this.searchId,
+                            inventoryId: this.optionId,
+                            selectedOption : {
+                                id: this.optionId,
+                                selectedDate: selectedOption.selectedDateTime,
+                                passengers: this._getPaxDetails(selectedOption)
+                            }
+                        }]
+                    };
+
+                    this.$.addCartApi.add(addToCartRequest);
                 },
 
                 /*
@@ -317,7 +338,7 @@
 
                     var addToCartItem = e.detail.addToCartItemResult[0];
 
-                    this.itinerary = addToCartItem.inventory;
+                    this.itinerary.fare = addToCartItem.inventory.fare;
 
                     //set policies
                     this.$.policy.policies = this.itinerary.generalPolicies;
@@ -352,6 +373,21 @@
                     this.fire('pricing-success');
                 },
 
+                _getPaxDetails: function (selectedOption) {
+
+                    paxCountMap = [];
+
+                    for (var i = 0; i < selectedOption.passengerTypesInfo.length; i++) {
+                        var passenger = selectedOption.passengerTypesInfo[i];
+                        paxCountMap.push({
+                            type: passenger.passengerType,
+                            count: passenger.quantity
+                        });
+                    }
+
+                    return paxCountMap;
+                },
+
                 /*
                  * <p>translator method to set view components data</p>
                 */
@@ -377,7 +413,13 @@
                         return;
                     }
 
-                    var paxInfo = this.itinerary.options[0].passengerTypesInfo;
+                    this._passengerFares = [];
+
+                    var selectedOption = this.itinerary.options.find(function (item) {
+                        return item.id.toLowerCase() === this.optionId.toLowerCase();
+                    }, this);
+
+                    var paxInfo = selectedOption.passengerTypesInfo;
 
                     var passengerFares = [];
 
@@ -391,17 +433,19 @@
                             return item.type.toLowerCase() === 'basefare';
                         });
 
-                        if (!baseFare || !this.passengers || !this.passengers.length) {
+                        if (!baseFare || !paxCountMap || !paxCountMap.length) {
                             continue;
                         }
 
-                        var passenger = this.passengers.find(function (item) {
+                        var passenger = paxCountMap.find(function (item) {
                             return item.type.toLowerCase() === paxInfo[i].passengerType.toLowerCase();
                         });
 
-                        if (passenger && passenger.quantity) {
-                            passenger = parseInt(passenger.quantity);
+                        if (!passenger || !passenger.count) {
+                            continue;
                         }
+
+                        passenger = parseInt(passenger.count);
 
                         if (passenger) {
                             passengerFares.push({
