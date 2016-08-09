@@ -146,7 +146,7 @@
 
         <t-sessionstorage
             id="sessionStore"
-            key="Activity_Result_Data"
+            key="Activitie_Result_Data"
             api-url-format="[[apiUrlFormat]]"
             on-t-sessionstorage-load-success="onSessionLoad">
         </t-sessionstorage>
@@ -246,7 +246,7 @@
 
                 observers: [
                     '_visibleChange(visible)',
-                    '_addItemToCart(optionId, selectedDate, paxCount)'
+                    '_addItemToCart(optionId, selectedDate, paxCount, apiBaseUrl)'
                 ],
 
                 listeners: {
@@ -264,7 +264,7 @@
                  * <p>observer function for page `visible` property</p>
                 */
                 _visibleChange: function (visible) {
-                    if (visible && (!this.optionId || !this.selectedDate || !this.paxCount)) {
+                    if (visible && (!this.optionId || !this.selectedDate || !this.paxCount || !this.apiBaseUrl)) {
                         this.fire('go-to-search');
                     }
 
@@ -275,8 +275,8 @@
                 /*
                  * <p>observer function for page `optionId` property</p>
                 */
-                _addItemToCart: function (optionId, selectedDate, paxCount) {
-                    if (!optionId || !selectedDate || !paxCount) {
+                _addItemToCart: function (optionId, selectedDate, paxCount, apiBaseUrl) {
+                    if (!optionId || !selectedDate || !paxCount || !apiBaseUrl) {
                         return;
                     }
 
