@@ -33,7 +33,7 @@
     <h3>Observers:</h3>
 
             1. '_visibleChange(visible)',
-            2. '_addItemToCart(authToken, selectedOption, searchId)'
+            2. '_addItemToCart(optionId, selectedDate, paxCount, apiBaseUrl)'
 
     <h3>Events:</h3>
 
@@ -159,8 +159,6 @@
 
             'use strict'
 
-            var paxCountMap = [];
-
             Polymer({
 
                 is: 't-activity-itinerary-details-page',
@@ -229,9 +227,12 @@
                 */
                 onRemoveCartSuccess: function (e) {
 
-                    var selectedOption = this.itinerary.options.find(function (item) {
-                        return item.id.toLowerCase() === this.optionId.toLowerCase();
-                    }, this);
+                    //sets passenger count mapping
+                    this._setPaxDetails();
+
+                    if (!this.paxCountMap) {
+                        console.error('passenger count mapping not found');
+                    }
 
                     var addToCartRequest = {
                             itemInfos: [{
@@ -239,8 +240,8 @@
                             inventoryId: this.optionId,
                             selectedOption : {
                                 id: this.optionId,
-                                selectedDate: selectedOption.selectedDateTime,
-                                passengers: this._getPaxDetails(selectedOption)
+                                selectedDate: this.selectedOption.selectedDateTime,
+                                passengers: this.paxCountMap
                             }
                         }]
                     };
@@ -300,21 +301,6 @@
                     this.fire('pricing-success');
                 },
 
-                _getPaxDetails: function (selectedOption) {
-
-                    paxCountMap = [];
-
-                    for (var i = 0; i < selectedOption.passengerTypesInfo.length; i++) {
-                        var passenger = selectedOption.passengerTypesInfo[i];
-                        paxCountMap.push({
-                            type: passenger.passengerType,
-                            count: passenger.quantity
-                        });
-                    }
-
-                    return paxCountMap;
-                },
-
                 /*
                  * <p>translator method to set view components data</p>
                 */
@@ -342,11 +328,7 @@
 
                     this._passengerFares = [];
 
-                    var selectedOption = this.itinerary.options.find(function (item) {
-                        return item.id.toLowerCase() === this.optionId.toLowerCase();
-                    }, this);
-
-                    var paxInfo = selectedOption.passengerTypesInfo;
+                    var paxInfo = this.selectedOption.passengerTypesInfo;
 
                     var passengerFares = [];
 
@@ -360,11 +342,11 @@
                             return item.type.toLowerCase() === 'basefare';
                         });
 
-                        if (!baseFare || !paxCountMap || !paxCountMap.length) {
+                        if (!baseFare || !this.paxCountMap || !this.paxCountMap.length) {
                             continue;
                         }
 
-                        var passenger = paxCountMap.find(function (item) {
+                        var passenger = this.paxCountMap.find(function (item) {
                             return item.type.toLowerCase() === paxInfo[i].passengerType.toLowerCase();
                         });
 
