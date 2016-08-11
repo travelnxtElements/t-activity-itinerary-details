@@ -1,6 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../t-image/t-image.html">
-<link rel="import" href="../t-shared-lib/t-date-behavior.html">
 <link rel="import" href="../t-car-result-item/t-car-result-item.html">
 <link rel="import" href="../iron-collapse/iron-collapse.html"/>
 
@@ -52,8 +51,8 @@
         </div>
         <iron-collapse  id="activityDetailsCollapse" opened$="[[_openActivityCollapse]]">
             <div class="collapse-content">
-                <div class="font-16 item">[[itinerary.options.0.name]]</div>
-                <div class="font-12 item">[[itinerary.options.0.selectedDateTime.date]]</div>
+                <div class="font-16 item">[[selectedOption.name]]</div>
+                <div class="font-12 item">[[selectedOption.selectedDateTime.date]]</div>
                 <div class="secondary-text font-12">
                   <div class="section-small">
                       <a class="link-style" on-tap="_policyClick">Policy</a>
@@ -71,10 +70,6 @@
 
                 is: 't-activity-itinerary-details',
 
-                behaviors: [
-                    TravelNxt.Behaviors.DateBehavior
-                ],
-
                 properties: {
 
                     /*
@@ -85,9 +80,9 @@
                     },
 
                     /*
-                    * <p>This property holds the value of search criteria</p>
+                    * <p>This property holds the value of selected option</p>
                     */
-                    searchCriteria: {
+                    selectedOption: {
                       type: Object
                     },
 
@@ -131,19 +126,6 @@
                   if (this.isCollapsible) {
                       this._openActivityCollapse = !this._openActivityCollapse;
                   }
-                }, 
-
-                /*
-                * <p>method to populate the data in itinerary details view</p>
-                * <p>`itinerary` & `searchCriteria` are mandetory properties</p>
-                */        
-                setDetails: function (itinerary, searchCriteria) {
-                  if (!itinerary || !searchCriteria) {
-                      return;
-                  }
-
-                  this.itinerary = itinerary;
-                  this.searchCriteria = searchCriteria;
                 }
             });
 

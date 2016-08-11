@@ -118,9 +118,11 @@
             on-t-shopping-cart-add-item-api-error="onAddCartError">
         </t-shopping-cart-add-item-api>
 
-        <t-activity-itinerary-details 
-            activity-icon="[[activityIcon]]" 
-            id="itineraryView">                
+        <t-activity-itinerary-details
+            id="itineraryView" 
+            activity-icon="[[activityIcon]]"
+            itinerary="[[itinerary]]"
+            selected-option="[[selectedOption]]">
         </t-activity-itinerary-details>
 
         <t-faredetails 
@@ -217,7 +219,8 @@
 
                     this.$.btnContinue.disabled = true;
 
-                    this.$.itineraryView.setDetails(this.itinerary, this.searchCriteria);
+                    //sets passenger count mapping
+                    this._setPaxDetails();
 
                     this.$.removeCartItemApi.remove();
                 },
@@ -226,9 +229,6 @@
                  * <p>success callback handler for `t-shopping-cart-remove-all-api` component</p>
                 */
                 onRemoveCartSuccess: function (e) {
-
-                    //sets passenger count mapping
-                    this._setPaxDetails();
 
                     if (!this.paxCountMap) {
                         console.error('passenger count mapping not found');
