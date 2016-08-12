@@ -119,7 +119,6 @@
         </t-shopping-cart-add-item-api>
 
         <t-activity-itinerary-details
-            id="itineraryView" 
             activity-icon="[[activityIcon]]"
             itinerary="[[itinerary]]"
             selected-option="[[selectedOption]]">
@@ -276,7 +275,6 @@
                     this.$.sessionStore.save();
 
                     if (this.itinerary) {
-                        this.$.itineraryView.itinerary = this.itinerary;
                         this._setFareDetails();
                     }
 
