@@ -33,8 +33,8 @@
 
     <h3>Observers:</h3>
 
-            1. '_visibleChange(visible)',
-            2. '_addItemToCart(optionId, selectedDate, paxCount, apiBaseUrl)'
+            1. '__visibleChange(visible)',
+            2. '__pageLoad(optionId, selectedDate, paxCount, apiBaseUrl)'
 
     <h3>Events:</h3>
 
@@ -178,8 +178,8 @@
                 ],
 
                 observers: [
-                    '_visibleChange(visible)',
-                    '_addItemToCart(optionId, selectedDate, paxCount, apiBaseUrl)'
+                    '__visibleChange(visible)',
+                    '__pageLoad(optionId, selectedDate, paxCount, apiBaseUrl)'
                 ],
 
                 listeners: {
@@ -205,7 +205,7 @@
                 /*
                  * <p>observer function for page `visible` property</p>
                 */
-                _visibleChange: function (visible) {
+                __visibleChange: function (visible) {
                     if (visible && (!this.optionId || !this.selectedDate || !this.paxCount || !this.apiBaseUrl)) {
                         this.fire('go-to-search');
                     }
@@ -217,7 +217,7 @@
                 /*
                  * <p>observer function for page `optionId` property</p>
                 */
-                _addItemToCart: function (optionId, selectedDate, paxCount, apiBaseUrl) {
+                __pageLoad: function (optionId, selectedDate, paxCount, apiBaseUrl) {
                     if (!optionId || !selectedDate || !paxCount || !apiBaseUrl) {
                         return;
                     }
