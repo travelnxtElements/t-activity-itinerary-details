@@ -1,0 +1,80 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../t-behavior/t-translator-behavior.html">
+
+<!--
+    <h3>Details:</h3>
+
+        `t-activity-pricing-translator` is a decorator component which translates `passengerTypesInfo` of activity option into `passengerInfo` property of `t-passenger-info-page`.
+
+    <h3>Input Property Format:</h3>
+
+        var input = 2
+
+        var passengerTypesInfo = [{
+            "fare": null,
+            "maxAge":99,
+            "minAge":13,
+            "minQuantity":1,
+            "maxQuantity":9,
+            "passengerType":"Adult",
+            "step":1,
+            "isStepSpecified":false,
+            "quantity":2,
+            "displayPassengerType":"Adult",
+            "singlePassengerType":"Adult",
+            "multiplePassengerType":"Adults"
+        }];
+
+    <h3>Example:</h3>
+
+        <t-activity-pricing-translator
+            input="[[input]]"
+            output="{{output}}"
+            passenger-types-info="[[passengerTypesInfo]]"
+            on-output-changed="_outputChanged"
+        </t-activity-pricing-translator>
+
+    @demo demo/index.html
+-->
+
+<dom-module id="t-activity-pricing-translator">
+
+    <template></template>
+
+    <script>
+
+        (function () {
+
+            'use strict'
+
+            Polymer({
+
+                is: 't-activity-pricing-translator',
+
+                behaviors: [
+                    TravelNxt.Behaviors.TranslatorBehavior
+                ],
+
+
+                /**
+                 * This is the observer function for `input` property.
+                 * It overrides behavior method.
+                 */
+                __translate: function () {
+
+                    this._setOutput({
+                            itemInfos: [{
+                            searchId: this.input.searchId,
+                            inventoryId: this.input.optionId,
+                            selectedOption : {
+                                id: this.input.optionId,
+                                selectedDate: this.input.selectedDate,
+                                passengers: this.input.passengers
+                            }
+                        }]
+                    });
+                }
+            });            
+        })()
+    </script>    
+</dom-module>

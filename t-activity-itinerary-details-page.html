@@ -7,6 +7,7 @@
 <link rel="import" href="../t-sessionstorage/t-sessionstorage.html">
 <link rel="import" href="../t-car-result-item/t-car-result-item.html" />
 <link rel="import" href="t-activity-itinerary-details.html">
+<link rel="import" href="t-activity-pricing-translator.html">
 <link rel="import" href="../t-car-itinerary-details/t-shopping-cart-add-item-api.html">
 <link rel="import" href="../t-car-itinerary-details/t-shopping-cart-remove-all-api.html">
 <link rel="import" href="../t-text-container/travel-element-styles.html">
@@ -100,7 +101,7 @@
 
         <t-shopping-cart-remove-all-api
             id="removeCartItemApi" 
-            loading={{loading}} 
+            loading="{{loading}}"
             api-base-url="[[apiBaseUrl]]" 
             api-relative-url="api/ShoppingCart/remove/all" 
             auth-token="[[authToken]]"
@@ -108,9 +109,15 @@
             on-t-shopping-cart-remove-all-api-error="onRemoveCartError">
         </t-shopping-cart-remove-all-api>
 
+        <t-activity-pricing-translator
+             id="pricingTranslator"
+             input="[[pricingRequestParams]]"
+             on-output-changed="_onBuildPricingRequest">
+        </t-activity-pricing-translator>
+
         <t-shopping-cart-add-item-api
             id="addCartApi" 
-            loading={{loading}} 
+            loading="{{loading}}" 
             api-base-url="[[apiBaseUrl]]"
             api-relative-url="api/ShoppingCart/add" 
             auth-token="[[authToken]]"
@@ -170,10 +177,6 @@
                     TravelNxt.Behaviors.ActivityPageBehavior
                 ],
 
-                properties: {
-                    
-                },
-
                 observers: [
                     '_visibleChange(visible)',
                     '_addItemToCart(optionId, selectedDate, paxCount, apiBaseUrl)'
@@ -181,6 +184,15 @@
 
                 listeners: {
                     'policy-click': '_initiatePolicyCall'
+                },
+
+                properties: {
+
+                    /**
+                     * Parameters required for translation to get pricing request object
+                     * @type {Object}
+                     */
+                    pricingRequestParams: Object
                 },
 
                 /*
@@ -233,19 +245,21 @@
                         console.error('passenger count mapping not found');
                     }
 
-                    var addToCartRequest = {
-                            itemInfos: [{
-                            searchId: this.searchId,
-                            inventoryId: this.optionId,
-                            selectedOption : {
-                                id: this.optionId,
-                                selectedDate: this.selectedOption.selectedDateTime,
-                                passengers: this.paxCountMap
-                            }
-                        }]
-                    };
+                    this.pricingRequestParams = {
+                        "searchId" : this.searchId,
+                        "optionId" : this.optionId,
+                        "selectedDate" : this.selectedDate,
+                        "passengers" : this.paxCountMap
+                    }
 
-                    this.$.addCartApi.add(addToCartRequest);
+                },
+
+                /**
+                 * __onBuildPricingObject Observer method, triggers when pricing/add to cart request has been modified
+                 * @return {Void}
+                 */
+                _onBuildPricingRequest: function (req) {
+                    this.$.addCartApi.add(req.detail.value);
                 },
 
                 /*

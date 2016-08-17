@@ -15,7 +15,7 @@
     "t-car-result-item": "travelnxtElements/t-car-result-item#^1.0.0",
     "t-car-itinerary-details": "travelnxtElements/t-car-itinerary-details#^1.0.0",
     "iron-collapse": "PolymerElements/iron-collapse#^1.2.0",
-    "t-behavior": "travelnxtelements/t-behavior"
+    "t-behavior": "travelnxtelements/t-behavior#master"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
