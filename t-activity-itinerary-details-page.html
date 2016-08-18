@@ -287,9 +287,12 @@
                 },
 
                 /*
-                 * error callback handler for `t-shopping-cart-add-item-api` component
+                 * Translate plicies to make them policy component compatible
                 */
                 _updatePolicies: function (itinerary) {
+
+                    //Extra translator method because different policy response structure in activity.
+
                     var policies = [];
                     if (itinerary && itinerary.generalPolicies) {
 
