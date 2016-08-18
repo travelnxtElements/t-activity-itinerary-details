@@ -2,6 +2,7 @@
 <link rel="import" href="../t-image/t-image.html">
 <link rel="import" href="../t-car-result-item/t-car-result-item.html">
 <link rel="import" href="../iron-collapse/iron-collapse.html"/>
+<link rel="import" href="../t-policy/t-policy.html">
 
 <!--
     <h3>Details:</h3>
@@ -54,9 +55,15 @@
                 <div class="font-16 item">[[selectedOption.name]]</div>
                 <div class="font-12 item">[[selectedOption.selectedDateTime.date]]</div>
                 <div class="secondary-text font-12">
-                  <div class="section-small">
-                      <a class="link-style" on-tap="_policyClick">Policy</a>
-                  </div>
+                    <div class="section-small">
+
+                        <t-policy 
+                            label="Policy"
+                            policies="[[itinerary.generalPolicies]]"
+                            is-data-provided-by-view>
+                        </t-policy>
+
+                    </div>
                 </div>
             </div>
         </iron-collapse>      

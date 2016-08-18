@@ -1,7 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../t-notify/t-notify.html">
 <link rel="import" href="../t-button/t-button.html">
-<link rel="import" href="../t-policy/t-policy.html">
 <link rel="import" href="../t-image/t-image.html">
 <link rel="import" href="../t-shared-lib/t-date-behavior.html">
 <link rel="import" href="../t-sessionstorage/t-sessionstorage.html">
@@ -23,7 +22,6 @@
         It uses following child components in it -
             1. `t-notify`
             2. `t-header`
-            3. `t-policy`
             4. `t-shopping-cart-remove-all-api`
             5. `t-shopping-cart-add-item-api`
             6. `t-faredetails`
@@ -87,17 +85,6 @@
         <content select="t-header"></content>
 
         <t-notify id="notify"></t-notify>
-
-        <t-policy id="policy"
-            external-link
-            label="Policies"
-            api-relative-url="api/ShoppingCart/add"
-            api-base-url="[[apiBaseUrl]]"
-            auth-token="[[authToken]]"
-            search-id="[[searchId]]"
-            inventory-id="[[itineraryId]]"
-            is-data-provided-by-view>
-        </t-policy>
 
         <t-shopping-cart-remove-all-api
             id="removeCartItemApi" 
@@ -182,10 +169,6 @@
                     '__pageLoad(optionId, selectedDate, paxCount, apiBaseUrl)'
                 ],
 
-                listeners: {
-                    'policy-click': '_initiatePolicyCall'
-                },
-
                 properties: {
 
                     /**
@@ -196,22 +179,12 @@
                 },
 
                 /*
-                 * <p>event handler to reset policy view</p>
-                */
-                _initiatePolicyCall: function (event) {
-                    this.$.policy.initiatePolicyCall();
-                },
-
-                /*
                  * <p>observer function for page `visible` property</p>
                 */
                 __visibleChange: function (visible) {
                     if (visible && (!this.optionId || !this.selectedDate || !this.paxCount || !this.apiBaseUrl)) {
                         this.fire('go-to-search');
                     }
-
-                    //initiate policy component
-                    this.$.policy.initiatePolicyView();
                 },
 
                 /*
@@ -225,8 +198,6 @@
                     this.$.fareDetails.data = null;
                     this.$.fareDetails.$.loaderContainer.hidden = false;
                     this.$.fareDetails.error = false;
-
-                    this.$.policy.policies = null;
 
                     this.$.btnContinue.disabled = true;
 
@@ -246,11 +217,11 @@
                     }
 
                     this.pricingRequestParams = {
-                        "searchId" : this.searchId,
-                        "optionId" : this.optionId,
-                        "selectedDate" : this.selectedDate,
-                        "passengers" : this.paxCountMap
-                    }
+                        searchId : this.searchId,
+                        optionId : this.optionId,
+                        selectedDate : this.selectedDate,
+                        passengers : this.paxCountMap
+                    };
 
                 },
 
@@ -267,7 +238,6 @@
                 */
                 onRemoveCartError: function (e) {
                     this.$.fareDetails.error = true;
-                    this.$.policy.onPolicyError();
                 },
 
                 /*
@@ -279,10 +249,9 @@
                         throw Error('failed to add itinerary in the cart!');
                     }
 
-                    this.itinerary.fare = e.detail.addToCartItemResult[0].inventory.fare;
+                    this._updatePolicies(e.detail.addToCartItemResult[0].inventory);
 
-                    //set policies
-                    this.$.policy.policies = this.itinerary.generalPolicies;
+                    this.itinerary = e.detail.addToCartItemResult[0].inventory;
 
                     this.$.sessionStore.value = this.itinerary;
 
@@ -295,12 +264,26 @@
                     this.$.btnContinue.disabled = false;
                 },
 
+                _updatePolicies: function (itinerary) {
+                    var policies = [];
+                    if (itinerary && itinerary.generalPolicies) {
+
+                        for (var i = 0; i < itinerary.generalPolicies.length; i++) {
+                            policies.push({
+                                policies: [itinerary.generalPolicies[i].value],
+                                type: itinerary.generalPolicies[i].key
+                            });
+                        }
+
+                        itinerary.generalPolicies = policies;
+                    }
+                },
+
                 /*
                  * <p>error callback handler for `t-shopping-cart-add-item-api` component</p>
                 */
                 onAddCartError: function (e) {
                     this.$.fareDetails.error = true;
-                    this.$.policy.onPolicyError();
                 },
 
                 /*
