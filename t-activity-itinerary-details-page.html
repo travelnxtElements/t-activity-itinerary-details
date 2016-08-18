@@ -165,8 +165,7 @@
                 ],
 
                 observers: [
-                    '__visibleChange(visible)',
-                    '__pageLoad(optionId, selectedDate, paxCount, apiBaseUrl)'
+                    '__pageLoad(visible, constructorObject)'
                 ],
 
                 properties: {
@@ -175,25 +174,48 @@
                      * Parameters required for translation to get pricing request object
                      * @type {Object}
                      */
-                    pricingRequestParams: Object
-                },
+                    pricingRequestParams: {
+                        type: Object
+                    },
 
-                /*
-                 * <p>observer function for page `visible` property</p>
-                */
-                __visibleChange: function (visible) {
-                    if (visible && (!this.optionId || !this.selectedDate || !this.paxCount || !this.apiBaseUrl)) {
-                        this.fire('go-to-search');
+                    /**
+                     * Observer parameter for page load observer function
+                     * @type {Object}
+                     */
+                    constructorObject: {
+                        type: Object
+                    },
+
+                    /**
+                     * Private copy of observer parameter for page load observer function
+                     * @type {Object}
+                     */
+                    _constructorObject: {
+                        type: Object,
+                        readOnly: true
                     }
                 },
 
                 /*
-                 * <p>observer function for page `optionId` property</p>
+                 * observer function for page `optionId` property
                 */
-                __pageLoad: function (optionId, selectedDate, paxCount, apiBaseUrl) {
-                    if (!optionId || !selectedDate || !paxCount || !apiBaseUrl) {
+                __pageLoad: function (visible, constructorObject) {
+                    if (!visible || !constructorObject.optionId || !constructorObject.selectedDate || !constructorObject.paxCount) {
                         return;
                     }
+
+                    //route has been called again, data is already present
+                    if (JSON.stringify(constructorObject) === JSON.stringify(this._constructorObject)) {
+                        return;
+                    }
+
+                    //update private copy
+                    this._set_constructorObject(constructorObject)
+
+                    //update page component properties
+                    this.optionId = this.constructorObject.optionId;
+                    this.selectedDate = this.constructorObject.selectedDate;
+                    this.paxCount = this.constructorObject.paxCount;
 
                     this.$.fareDetails.data = null;
                     this.$.fareDetails.$.loaderContainer.hidden = false;
@@ -208,7 +230,7 @@
                 },
 
                 /*
-                 * <p>success callback handler for `t-shopping-cart-remove-all-api` component</p>
+                 * success callback handler for `t-shopping-cart-remove-all-api` component
                 */
                 onRemoveCartSuccess: function (e) {
 
@@ -234,14 +256,14 @@
                 },
 
                 /*
-                 * <p>error callback handler for `t-shopping-cart-remove-all-api` component</p>
+                 * error callback handler for `t-shopping-cart-remove-all-api` component
                 */
                 onRemoveCartError: function (e) {
                     this.$.fareDetails.error = true;
                 },
 
                 /*
-                 * <p>success callback handler for `t-shopping-cart-add-item-api` component</p>
+                 * success callback handler for `t-shopping-cart-add-item-api` component
                 */
                 onAddCartSuccess: function (e) {
                     if (!e.detail.addToCartItemResult || !e.detail.addToCartItemResult.length) {
@@ -264,6 +286,9 @@
                     this.$.btnContinue.disabled = false;
                 },
 
+                /*
+                 * error callback handler for `t-shopping-cart-add-item-api` component
+                */
                 _updatePolicies: function (itinerary) {
                     var policies = [];
                     if (itinerary && itinerary.generalPolicies) {
@@ -280,14 +305,14 @@
                 },
 
                 /*
-                 * <p>error callback handler for `t-shopping-cart-add-item-api` component</p>
+                 * error callback handler for `t-shopping-cart-add-item-api` component
                 */
                 onAddCartError: function (e) {
                     this.$.fareDetails.error = true;
                 },
 
                 /*
-                 * <p>continue button tap event handler</p>
+                 * continue button tap event handler
                 */
                 onBtnContinueClick: function () {
                     if (this.$.btnContinue.disabled) {
@@ -297,7 +322,7 @@
                 },
 
                 /*
-                 * <p>translator method to set view components data</p>
+                 * translator method to set view components data
                 */
                 _setFareDetails: function () {
                     if (!this.itinerary || !this.searchCriteria) {
@@ -314,7 +339,7 @@
                 },
 
                 /*
-                 * <p>Builds fare components to include passenger-wise prices as per passenger counts provided while pricing</p>
+                 * Builds fare components to include passenger-wise prices as per passenger counts provided while pricing
                 */
                 _buildFareComponents: function () {
                     if (!this.itinerary.options || !this.itinerary.options.length) {
@@ -364,7 +389,7 @@
                 },
 
                 /*
-                 * <p>`t-sessionstorage` load success callback handler</p>
+                 * `t-sessionstorage` load success callback handler
                 */
                 onSessionLoad: function () {
                     if (this.$.sessionStore.value) {
