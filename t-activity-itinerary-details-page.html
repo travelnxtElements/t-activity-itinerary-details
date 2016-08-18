@@ -165,7 +165,7 @@
                 ],
 
                 observers: [
-                    '__pageLoad(visible, constructorObject)'
+                    '__pageLoad(visible, constructorObj)'
                 ],
 
                 properties: {
@@ -182,7 +182,7 @@
                      * Observer parameter for page load observer function
                      * @type {Object}
                      */
-                    constructorObject: {
+                    constructorObj: {
                         type: Object
                     },
 
@@ -190,7 +190,7 @@
                      * Private copy of observer parameter for page load observer function
                      * @type {Object}
                      */
-                    _constructorObject: {
+                    _constructorObj: {
                         type: Object,
                         readOnly: true
                     }
@@ -199,23 +199,23 @@
                 /*
                  * observer function for page `optionId` property
                 */
-                __pageLoad: function (visible, constructorObject) {
-                    if (!visible || !constructorObject.optionId || !constructorObject.selectedDate || !constructorObject.paxCount) {
+                __pageLoad: function (visible, constructorObj) {
+                    if (!visible || !constructorObj.optionId || !constructorObj.selectedDate || !constructorObj.paxCount) {
                         return;
                     }
 
                     //route has been called again, data is already present
-                    if (JSON.stringify(constructorObject) === JSON.stringify(this._constructorObject)) {
+                    if (JSON.stringify(constructorObj) === JSON.stringify(this._constructorObj)) {
                         return;
                     }
 
                     //update private copy
-                    this._set_constructorObject(constructorObject)
+                    this._set_constructorObj(constructorObj)
 
                     //update page component properties
-                    this.optionId = this.constructorObject.optionId;
-                    this.selectedDate = this.constructorObject.selectedDate;
-                    this.paxCount = this.constructorObject.paxCount;
+                    this.optionId = this.constructorObj.optionId;
+                    this.selectedDate = this.constructorObj.selectedDate;
+                    this.paxCount = this.constructorObj.paxCount;
 
                     this.$.fareDetails.data = null;
                     this.$.fareDetails.$.loaderContainer.hidden = false;
