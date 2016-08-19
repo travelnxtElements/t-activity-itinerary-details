@@ -115,6 +115,7 @@
         <t-activity-itinerary-details
             activity-icon="[[activityIcon]]"
             itinerary="[[itinerary]]"
+            policies="[[_policies]]"
             selected-option="[[selectedOption]]">
         </t-activity-itinerary-details>
 
@@ -193,6 +194,23 @@
                     _constructorObj: {
                         type: Object,
                         readOnly: true
+                    },
+
+                    /**
+                     * Policies to be transfered to details view
+                     * @type {Array}
+                     */
+                    _policies: {
+                        type: Array,
+                        value: []
+                    },
+
+                    /*
+                     * <p>This property holds the value of currency</p>
+                     */
+                    itinerary: {
+                        type: Object,
+                        notify: true
                     }
                 },
 
@@ -220,6 +238,8 @@
                     this.$.fareDetails.data = null;
                     this.$.fareDetails.$.loaderContainer.hidden = false;
                     this.$.fareDetails.error = false;
+
+                    this._policies = [];
 
                     this.$.btnContinue.disabled = true;
 
@@ -272,6 +292,10 @@
                     }
 
                     this._updatePolicies(e.detail.addToCartItemResult[0].inventory);
+
+                    this._policies = e.detail.addToCartItemResult[0].inventory.generalPolicies;
+
+                    e.detail.addToCartItemResult[0].inventory.options = this.itinerary.options;
 
                     this.itinerary = e.detail.addToCartItemResult[0].inventory;
 

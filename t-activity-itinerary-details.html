@@ -59,7 +59,7 @@
 
                         <t-policy 
                             label="Policy"
-                            policies="[[itinerary.generalPolicies]]"
+                            policies="[[policies]]"
                             is-data-provided-by-view>
                         </t-policy>
 
@@ -109,7 +109,16 @@
                     _openActivityCollapse: {
                       type: Boolean,
                       value: false
-                    } 
+                    },
+
+                    /**
+                     * Policies of an activity
+                     * @type {Array}
+                     */
+                    policies: {
+                        type: Array,
+                        value: []
+                    }
                 },
 
                 /*
