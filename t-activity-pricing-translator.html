@@ -62,8 +62,12 @@
                  */
                 __translate: function () {
 
+                    if (!this.input) {
+                        throw Error('input field is required');
+                    }
+
                     this._setOutput({
-                            itemInfos: [{
+                        itemInfos: [{
                             searchId: this.input.searchId,
                             inventoryId: this.input.optionId,
                             selectedOption : {
@@ -74,7 +78,7 @@
                         }]
                     });
                 }
-            });            
-        })()
+            });
+        })();
     </script>    
 </dom-module>
