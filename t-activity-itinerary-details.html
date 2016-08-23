@@ -131,6 +131,15 @@
                     headerBackIcon: {
                         type : String,
                         value: 'arrow-back'
+                    },
+
+                    /*
+                     * <p>This holds the value of default activity icon</p>
+                     */
+                    activityIcon: {
+                        type: String,
+                        value: 'places:pool'
+
                     }
                 },
 
@@ -138,23 +147,23 @@
                 * <p>fires `policy-click` event</p>
                 */
                 _policyClick: function () {
-                  this.fire('policy-click', { itineraryId: this.itinerary.id });
+                    this.fire('policy-click', { itineraryId: this.itinerary.id });
                 },
 
                 /*
                 * <p>fires `policy-click` event</p>
                 */
                 _checkIfCollapsible: function(isCollapsible) {
-                  this._openActivityCollapse = !isCollapsible;
+                    this._openActivityCollapse = !isCollapsible;
                 },
 
                 /*
                 * <p>toggles details view in itinerary details</p>
                 */
                 _toggleDetails: function () {
-                  if (this.isCollapsible) {
+                    if (this.isCollapsible) {
                       this._openActivityCollapse = !this._openActivityCollapse;
-                  }
+                    }
                 }
             });
 
