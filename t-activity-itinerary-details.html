@@ -3,6 +3,7 @@
 <link rel="import" href="../t-car-result-item/t-car-result-item.html">
 <link rel="import" href="../iron-collapse/iron-collapse.html"/>
 <link rel="import" href="../t-policy/t-policy.html">
+<link rel="import" href="../juicy-html/juicy-html.html">
 
 <!--
     <h3>Details:</h3>
@@ -40,7 +41,9 @@
         </template>
         <div class="logo-area font-semi section-small primary-light-text layout horizontal" on-tap="_toggleDetails">
             <div class="left-section flex">
-                <div class="font-16 item">[[itinerary.name]]</div>
+                <div class="font-16 item">
+                    <template is="juicy-html" content$="[[itinerary.name]]"></template>
+                </div>
                 <div class="font-12 item">[[itinerary.category.name]]</div>
             </div>
             <template is="dom-if" if="[[isCollapsible]]">
