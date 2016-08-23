@@ -63,6 +63,7 @@
                         <t-policy 
                             label="Policy"
                             policies="[[policies]]"
+                            header-icon="[[policyHeaderIcon]]"
                             is-data-provided-by-view>
                         </t-policy>
 
@@ -121,6 +122,15 @@
                     policies: {
                         type: Array,
                         value: []
+                    },
+
+                    /**
+                     * Property to have customizable policy header icon
+                     * @type {String}
+                     */
+                    headerBackIcon: {
+                        type : String,
+                        value: 'arrow-back'
                     }
                 },
 
