@@ -32,7 +32,7 @@
     <h3>Observers:</h3>
 
             1. '__visibleChange(visible)',
-            2. '__pageLoad(optionId, selectedDate, paxCount, apiBaseUrl)'
+            2. '__pageLoad(visible, constructorObj)'
 
     <h3>Events:</h3>
 
@@ -219,12 +219,7 @@
                  * observer function for page `optionId` property
                 */
                 __pageLoad: function (visible, constructorObj) {
-                    if (!visible || !constructorObj.optionId || !constructorObj.selectedDate || !constructorObj.paxCount) {
-                        return;
-                    }
-
-                    //route has been called again, data is already present
-                    if (JSON.stringify(constructorObj) === JSON.stringify(this._constructorObj)) {
+                    if (!visible || !constructorObj || !this._isConstructorChanged()) {
                         return;
                     }
 
