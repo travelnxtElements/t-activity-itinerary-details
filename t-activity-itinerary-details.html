@@ -35,42 +35,54 @@
             :host {
                 display: block;
             }
+            .image {
+                display: block;
+            }
+            .content {
+                position:relative;
+            }
+            .info-area {
+                position:absolute;
+                top:0;
+                left:0;
+                right:0;
+                padding: 5px 10px;
+                background: rgba(0, 0, 0, 0.60);
+                color: #fff;
+                transform: translateY(-100%);
+            }
         </style>
         <template is="dom-if" if="[[!isCollapsible]]">
-            <t-image loading-icon="[[activityIcon]]" sizing="contain" class="imageArea border-bottom" height="120" src="[[itinerary.heroImageUrl]]"></t-image>
+            <t-image loading-icon="[[activityIcon]]" sizing="contain" class="border-bottom image" height="150" src="[[itinerary.heroImageUrl]]"></t-image>
         </template>
-        <div class="logo-area font-semi section-small primary-light-text layout horizontal" on-tap="_toggleDetails">
-            <div class="left-section flex">
-                <div class="font-16 item">
-                    <template is="juicy-html" content$="[[itinerary.name]]"></template>
-                </div>
-                <div class="font-12 item">[[itinerary.category.name]]</div>
-            </div>
-            <template is="dom-if" if="[[isCollapsible]]">
-                <div class="right-section">
-                    <iron-icon hidden$="[[_openActivityCollapse]]" icon="icons:expand-more"></iron-icon>
-                    <iron-icon hidden$="[[!_openActivityCollapse]]" icon="icons:expand-less"></iron-icon>
-                </div>
-            </template>            
-        </div>
-        <iron-collapse  id="activityDetailsCollapse" opened$="[[_openActivityCollapse]]">
-            <div class="collapse-content">
-                <div class="font-16 item">[[selectedOption.name]]</div>
-                <div class="font-12 item">[[selectedOption.selectedDateTime.date]]</div>
-                <div class="secondary-text font-12">
-                    <div class="section-small">
-
-                        <t-policy 
-                            label="Policy"
-                            policies="[[policies]]"
-                            header-icon="[[headerBackIcon]]"
-                            is-data-provided-by-view>
-                        </t-policy>
-
+        <div class="content">
+            <div id="info-area" class$="layout horizontal section-small {{_computedClass}}" on-tap="_toggleDetails">
+                <div class="left-section flex">
+                    <div class="font-16 font-semi margin-bottom">
+                        <template is="juicy-html" content$="[[itinerary.name]]"></template>
                     </div>
+                    <div class="font-12 item">[[itinerary.category.name]]</div>
                 </div>
+                <template is="dom-if" if="[[isCollapsible]]">
+                    <div class="right-section">
+                        <iron-icon hidden$="[[_openActivityCollapse]]" icon="icons:expand-more"></iron-icon>
+                        <iron-icon hidden$="[[!_openActivityCollapse]]" icon="icons:expand-less"></iron-icon>
+                    </div>
+                </template>            
             </div>
-        </iron-collapse>      
+            <iron-collapse  id="activityDetailsCollapse" opened$="[[_openActivityCollapse]]">
+                <div class="collapse-content section-small font-14 primary-text">
+                    <div class="margin-bottom">[[selectedOption.name]]</div>
+                    <div class="margin-bottom-medium">[[selectedOption.selectedDateTime.date]]</div>
+                    <t-policy 
+                        label="Policy"
+                        policies="[[policies]]"
+                        header-icon="[[headerBackIcon]]"
+                        is-data-provided-by-view>
+                    </t-policy>
+                </div>
+            </iron-collapse>
+         </div>      
     </template>
     <script>
 
@@ -140,7 +152,16 @@
                         type: String,
                         value: 'places:pool'
 
+                    },
+
+                    _computedClass: {
+                        type: String,
+                        computed: '_computeClass(isCollapsible)'
                     }
+                },
+
+                _computeClass: function(isCollapsible){
+                    return !isCollapsible ? 'info-area' : 'simple-area';
                 },
 
                 /*
