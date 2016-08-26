@@ -51,17 +51,20 @@
                 color: #fff;
                 transform: translateY(-100%);
             }
+            .info-area .secondary-text{
+                color: inherit;
+            }
         </style>
         <template is="dom-if" if="[[!isCollapsible]]">
-            <t-image loading-icon="[[activityIcon]]" sizing="contain" class="border-bottom image" height="150" src="[[itinerary.heroImageUrl]]"></t-image>
+            <t-image loading-icon="[[activityIcon]]" sizing="cover" class="border-bottom image" height="220" src="[[itinerary.heroImageUrl]]"></t-image>
         </template>
         <div class="content">
-            <div id="info-area" class$="layout horizontal section-small {{_computedClass}}" on-tap="_toggleDetails">
+            <div class$="layout horizontal section-small {{_computedClass}}" on-tap="_toggleDetails">
                 <div class="left-section flex">
                     <div class="font-16 font-semi margin-bottom">
                         <template is="juicy-html" content$="[[itinerary.name]]"></template>
                     </div>
-                    <div class="font-12 item">[[itinerary.category.name]]</div>
+                    <div class="font-12 secondary-text">[[itinerary.category.name]]</div>
                 </div>
                 <template is="dom-if" if="[[isCollapsible]]">
                     <div class="right-section">
