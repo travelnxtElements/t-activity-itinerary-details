@@ -146,9 +146,9 @@
 
         <t-sessionstorage
             id="sessionStore"
-            key="Activitie_Result_Data"
             api-url-format="[[apiUrlFormat]]"
-            on-t-sessionstorage-load-success="onSessionLoad">
+            on-t-sessionstorage-load-success="_onSessionGet"
+            on-t-sessionstorage-save-success="_onSessionSave">
         </t-sessionstorage>
     </template>
 
@@ -227,7 +227,7 @@
                     this.$.btnContinue.disabled = true;
 
                     this.$.removeCartItemApi.remove();                    
-                },,
+                },
 
                 _getDetailsConstructor: function () {
                     if (!this.selectedOption) {
@@ -250,12 +250,15 @@
                     detailsConstructor.selectedDate = this.selectedOption.selectedDateTime;
 
                     this.detailsConstructor = detailsConstructor;
-                }
+                },
 
                 /*
                  * success callback handler for `t-shopping-cart-remove-all-api` component
                 */
                 onRemoveCartSuccess: function (e) {
+
+                    //generates paxCountMap
+                    this._setPaxDetails();
 
                     if (!this.paxCountMap) {
                         console.error('passenger count mapping not found');
@@ -263,8 +266,8 @@
 
                     this.pricingRequestParams = {
                         searchId: this.searchId,
-                        optionId: this.optionId,
-                        selectedDate: this.selectedDate,
+                        optionId: this.selectedOption.id,
+                        selectedDate: this.selectedOption.selectedDateTime,
                         passengers: this.paxCountMap
                     };
 
@@ -289,6 +292,7 @@
                  * success callback handler for `t-shopping-cart-add-item-api` component
                 */
                 onAddCartSuccess: function (e) {
+                    
                     if (!e.detail.addToCartItemResult || !e.detail.addToCartItemResult.length) {
                         this.$.fareDetails.error = true;
                         throw Error('failed to add itinerary in the cart!');
@@ -302,9 +306,13 @@
 
                     this.itinerary = e.detail.addToCartItemResult[0].inventory;
 
-                    this.$.sessionStore.value = this.itinerary;
+                    this._data = [{
+                        key: 'Activitie_Itinerary',
+                        propertyName: 'itinerary',
+                        value: this.itinerary
+                    }];
 
-                    this.$.sessionStore.save();
+                    this.setSession();
 
                     if (this.itinerary) {
                         this._setFareDetails();
@@ -418,17 +426,11 @@
                     this._passengerFares = passengerFares;
                 },
 
-                /*
-                 * `t-sessionstorage` load success callback handler
-                */
-                onSessionLoad: function () {
-                    if (this.$.sessionStore.value) {
-                        this.itinerary = this.$.sessionStore.value.itinerary;
-                    }
-                },
-
                 _syncSession: function () {
                     this._data = [{
+                        key: 'Activitie_Search_Id',
+                        propertyName: 'searchId'
+                    }, {
                         key: 'Activitie_Option',
                         propertyName: 'selectedOption'
                     }, {
