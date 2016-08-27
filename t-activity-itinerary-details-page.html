@@ -170,6 +170,10 @@
 
                 properties: {
 
+                    detailsConstructor: {
+                        type: Object
+                    },
+
                     /**
                      * Parameters required for translation to get pricing request object
                      * @type {Object}
@@ -189,7 +193,7 @@
                 },
 
                 listeners: {
-                    'session-sync-complete': '_getDetailsConstructor'
+                    'session-get-complete': '_getDetailsConstructor'
                 },
 
                 /*
@@ -213,6 +217,10 @@
                 },
 
                 __updatePage: function (detailsConstructor) {
+
+                    if (!visible || detailsConstructor === {}) {
+                        return;
+                    }
 
                     if (!detailsConstructor) {
                         this.fire('go-to-search');
@@ -308,7 +316,6 @@
 
                     this._data = [{
                         key: 'Activitie_Itinerary',
-                        propertyName: 'itinerary',
                         value: this.itinerary
                     }];
 
