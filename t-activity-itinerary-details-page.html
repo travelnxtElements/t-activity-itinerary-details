@@ -13,6 +13,7 @@
 <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html"/>
 <link rel="import" href="../t-behavior/t-page-behavior.html">
 <link rel="import" href="../t-behavior/t-activity-page-behavior.html">
+<link rel="import" href="../t-behavior/t-session-behavior.html"/>
 
 <!--
     <h3>Details:</h3>
@@ -163,11 +164,8 @@
                 behaviors: [
                     TravelNxt.Behaviors.DateBehavior,
                     TravelNxt.Behaviors.PageBehavior,
-                    TravelNxt.Behaviors.ActivityPageBehavior
-                ],
-
-                observers: [
-                    '__pageLoad(visible, constructorObj)'
+                    TravelNxt.Behaviors.ActivityPageBehavior,
+                    TravelNxt.Behaviors.SessionBehavior
                 ],
 
                 properties: {
@@ -181,55 +179,44 @@
                     },
 
                     /**
-                     * Observer parameter for page load observer function
-                     * @type {Object}
-                     */
-                    constructorObj: {
-                        type: Object
-                    },
-
-                    /**
-                     * Private copy of observer parameter for page load observer function
-                     * @type {Object}
-                     */
-                    _constructorObj: {
-                        type: Object,
-                        readOnly: true
-                    },
-
-                    /**
                      * Policies to be transfered to details view
                      * @type {Array}
                      */
                     _policies: {
                         type: Array,
                         value: []
-                    },
-
-                    /*
-                     * <p>This property holds the value of currency</p>
-                     */
-                    itinerary: {
-                        type: Object,
-                        notify: true
                     }
                 },
+
+                listeners: {
+                    'session-sync-complete': '_getDetailsConstructor'
+                },
+
+                /*
+                 * Observer nethods
+                 */
+                observers: [
+                    '__pageLoad(visible)',
+                    '__updatePage(detailsConstructor)'
+                ],
+
 
                 /*
                  * observer function for page `optionId` property
                 */
-                __pageLoad: function (visible, constructorObj) {
-                    if (!visible || !constructorObj || !this._isConstructorChanged()) {
+                __pageLoad: function (visible) {
+                    if (!visible) {
                         return;
                     }
 
-                    //update private copy
-                    this._set_constructorObj(constructorObj)
+                    this._syncSession();
+                },
 
-                    //update page component properties
-                    this.optionId = this.constructorObj.optionId;
-                    this.selectedDate = this.constructorObj.selectedDate;
-                    this.paxCount = this.constructorObj.paxCount;
+                __updatePage: function (detailsConstructor) {
+
+                    if (!detailsConstructor) {
+                        this.fire('go-to-search');
+                    }
 
                     this.$.fareDetails.data = null;
                     this.$.fareDetails.$.loaderContainer.hidden = false;
@@ -239,11 +226,31 @@
 
                     this.$.btnContinue.disabled = true;
 
-                    //sets passenger count mapping
-                    this._setPaxDetails();
+                    this.$.removeCartItemApi.remove();                    
+                },,
 
-                    this.$.removeCartItemApi.remove();
-                },
+                _getDetailsConstructor: function () {
+                    if (!this.selectedOption) {
+                        return;
+                    }
+
+                    if (!this.selectedOption.passengerTypesInfo) {
+                        return;
+                    }
+
+                    var detailsConstructor = {};
+
+                    for (var i = 0; i < this.selectedOption.passengerTypesInfo.length; i++) {
+                        var key = this.selectedOption.passengerTypesInfo[i].passengerType;
+                        var value = this.selectedOption.passengerTypesInfo[i].quantity;
+                        detailsConstructor[key] = value;
+                    }
+
+                    detailsConstructor.optionId = this.selectedOption.id;
+                    detailsConstructor.selectedDate = this.selectedOption.selectedDateTime;
+
+                    this.detailsConstructor = detailsConstructor;
+                }
 
                 /*
                  * success callback handler for `t-shopping-cart-remove-all-api` component
@@ -348,7 +355,7 @@
                  * translator method to set view components data
                 */
                 _setFareDetails: function () {
-                    if (!this.itinerary || !this.searchCriteria) {
+                    if (!this.itinerary) {
                         return;
                     }
 
@@ -418,6 +425,18 @@
                     if (this.$.sessionStore.value) {
                         this.itinerary = this.$.sessionStore.value.itinerary;
                     }
+                },
+
+                _syncSession: function () {
+                    this._data = [{
+                        key: 'Activitie_Option',
+                        propertyName: 'selectedOption'
+                    }, {
+                        key: 'Activitie_Itinerary',
+                        propertyName: 'itinerary'
+                    }];
+
+                    this.getSession();
                 }
             });
 
