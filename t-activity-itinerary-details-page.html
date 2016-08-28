@@ -174,6 +174,11 @@
                         type: Object
                     },
 
+                    _detailsConstructor: {
+                        type: Object,
+                        readOnly: true
+                    },
+
                     /**
                      * Parameters required for translation to get pricing request object
                      * @type {Object}
@@ -218,13 +223,15 @@
 
                 __updatePage: function (detailsConstructor) {
 
-                    if (!this.visible || detailsConstructor === {}) {
-                        return;
-                    }
-
                     if (!detailsConstructor) {
                         this.fire('go-to-search');
                     }
+
+                    if (JSON.stringify(detailsConstructor) === JSON.stringify(this._detailsConstructor)) {
+                        return;
+                    }
+
+                    this._set_detailsConstructor(detailsConstructor);
 
                     this.$.fareDetails.data = null;
                     this.$.fareDetails.$.loaderContainer.hidden = false;
