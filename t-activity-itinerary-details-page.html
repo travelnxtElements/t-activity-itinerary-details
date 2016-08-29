@@ -194,6 +194,14 @@
                     _policies: {
                         type: Array,
                         value: []
+                    },
+
+                    /**
+                     * This property stores the updated option sent in add to cart response
+                     * @type {Object}
+                     */
+                    _selectedOption: {
+                        type: Object
                     }
                 },
 
@@ -316,6 +324,15 @@
                     this._updatePolicies(e.detail.addToCartItemResult[0].inventory);
 
                     this._policies = e.detail.addToCartItemResult[0].inventory.generalPolicies;
+                    
+                    //This copy is saved as selected option price may change in add to cart call
+                    this._selectedOption = e.detail.addToCartItemResult[0].inventory.options.find(function (item) {
+                        return item.id === this.selectedOption.id;
+                    }, this);
+
+
+                    //detect fare change
+                    this.fareChange = e.detail.addToCartItemResult[0].fareChange;
 
                     e.detail.addToCartItemResult[0].inventory.options = this.itinerary.options;
 
@@ -386,6 +403,8 @@
                             return item.type.toLowerCase() !== 'basefare';
                         });
 
+                        this.$.fareDetails.fareChange = this.fareChange;
+
                         this._buildFareComponents();
                     }
                 },
@@ -400,7 +419,7 @@
 
                     this._passengerFares = [];
 
-                    var paxInfo = this.selectedOption.passengerTypesInfo;
+                    var paxInfo = this._selectedOption.passengerTypesInfo;
 
                     var passengerFares = [];
 
