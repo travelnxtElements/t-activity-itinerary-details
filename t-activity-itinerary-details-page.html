@@ -116,6 +116,7 @@
         <t-activity-itinerary-details
             activity-icon="[[activityIcon]]"
             itinerary="[[itinerary]]"
+            show-policy-error="{{_showPolicyError}}"
             policies="[[_policies]]"
             header-back-icon="[[headerBackIcon]]"
             selected-option="[[selectedOption]]">
@@ -202,6 +203,11 @@
                      */
                     _selectedOption: {
                         type: Object
+                    },
+
+                    _showPolicyError: {
+                        type: Boolean,
+                        value: false
                     }
                 },
 
@@ -244,6 +250,8 @@
                     this.$.fareDetails.data = null;
                     this.$.fareDetails.$.loaderContainer.hidden = false;
                     this.$.fareDetails.error = false;
+
+                    this._showPolicyError = false;
 
                     this._policies = [];
 
@@ -323,7 +331,12 @@
 
                     this._updatePolicies(e.detail.addToCartItemResult[0].inventory);
 
-                    this._policies = e.detail.addToCartItemResult[0].inventory.generalPolicies;
+                    if (e.detail.addToCartItemResult[0].inventory.generalPolicies 
+                        && e.detail.addToCartItemResult[0].inventory.generalPolicies.length) {
+                        this._policies = e.detail.addToCartItemResult[0].inventory.generalPolicies;
+                    } else {
+                        this._showPolicyError = true;
+                    }
                     
                     //This copy is saved as selected option price may change in add to cart call
                     this._selectedOption = e.detail.addToCartItemResult[0].inventory.options.find(function (item) {
@@ -378,6 +391,7 @@
                 */
                 onAddCartError: function (e) {
                     this.$.fareDetails.error = true;
+                    this._showPolicyError = true;
                 },
 
                 /*

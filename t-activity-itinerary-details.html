@@ -77,7 +77,8 @@
                 <div class="collapse-content section-small font-14 primary-text">
                     <div class="margin-bottom">[[selectedOption.name]]</div>
                     <div class="margin-bottom-medium">[[selectedOption.selectedDateTime.date]]</div>
-                    <t-policy 
+                    <t-policy
+                        policy-failed="{{showPolicyError}}"
                         label="Policy"
                         policies="[[policies]]"
                         header-icon="[[headerBackIcon]]"
@@ -160,6 +161,12 @@
                     _computedClass: {
                         type: String,
                         computed: '_computeClass(isCollapsible)'
+                    },
+
+                    showPolicyError: {
+                        type: Boolean,
+                        value: false,
+                        notify: true
                     }
                 },
 
