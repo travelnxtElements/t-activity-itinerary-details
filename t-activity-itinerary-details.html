@@ -77,10 +77,12 @@
                 <div class="collapse-content section-small font-14 primary-text">
                     <div class="margin-bottom">[[selectedOption.name]]</div>
                     <div class="margin-bottom-medium">[[selectedOption.selectedDateTime.date]]</div>
-                    <t-policy
-                        policy-failed="{{showPolicyError}}"
+                    <t-policy 
                         label="Policy"
+                        show-other-policies
+                        other-policies-label="Cancellation Policies"
                         policies="[[policies]]"
+                        other-policies="[[cancellationPolicies]]"
                         header-icon="[[headerBackIcon]]"
                         is-data-provided-by-view>
                     </t-policy>
@@ -140,6 +142,11 @@
                         value: []
                     },
 
+                    cancellationPolicies: {
+                        type: Array,
+                        value: []
+                    },
+
                     /**
                      * Property to have customizable policy header icon
                      * @type {String}
@@ -161,12 +168,6 @@
                     _computedClass: {
                         type: String,
                         computed: '_computeClass(isCollapsible)'
-                    },
-
-                    showPolicyError: {
-                        type: Boolean,
-                        value: false,
-                        notify: true
                     }
                 },
 

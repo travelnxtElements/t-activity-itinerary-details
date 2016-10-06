@@ -116,8 +116,8 @@
         <t-activity-itinerary-details
             activity-icon="[[activityIcon]]"
             itinerary="[[itinerary]]"
-            show-policy-error="{{_showPolicyError}}"
             policies="[[_policies]]"
+            cancellation-policies="[[_cancellationPolicies]]"
             header-back-icon="[[headerBackIcon]]"
             selected-option="[[selectedOption]]">
         </t-activity-itinerary-details>
@@ -197,17 +197,17 @@
                         value: []
                     },
 
+                    _cancellationPolicies: {
+                        type: Array,
+                        value: []
+                    },
+
                     /**
                      * This property stores the updated option sent in add to cart response
                      * @type {Object}
                      */
                     _selectedOption: {
                         type: Object
-                    },
-
-                    _showPolicyError: {
-                        type: Boolean,
-                        value: false
                     }
                 },
 
@@ -251,9 +251,8 @@
                     this.$.fareDetails.$.loaderContainer.hidden = false;
                     this.$.fareDetails.error = false;
 
-                    this._showPolicyError = false;
-
                     this._policies = [];
+                    this._cancellationPolicies = [];
 
                     this.$.btnContinue.disabled = true;
 
@@ -331,12 +330,9 @@
 
                     this._updatePolicies(e.detail.addToCartItemResult[0].inventory);
 
-                    if (e.detail.addToCartItemResult[0].inventory.generalPolicies 
-                        && e.detail.addToCartItemResult[0].inventory.generalPolicies.length) {
-                        this._policies = e.detail.addToCartItemResult[0].inventory.generalPolicies;
-                    } else {
-                        this._showPolicyError = true;
-                    }
+                    this._policies = e.detail.addToCartItemResult[0].inventory.generalPolicies;
+
+                    this._cancellationPolicies = this._decorateOtherPolicies(e.detail.addToCartItemResult[0].inventory.policies);
                     
                     //This copy is saved as selected option price may change in add to cart call
                     this._selectedOption = e.detail.addToCartItemResult[0].inventory.options.find(function (item) {
@@ -365,6 +361,22 @@
                     this.$.btnContinue.disabled = false;
                 },
 
+                _decorateOtherPolicies: function (policies) {
+                    policies.forEach(function (policy) {
+                        if (policy.penalty.components && policy.penalty.components.length) {
+                            var fareComponents = policy.penalty.components;
+                            for (var i = 0; i < fareComponents.length; i++) {
+                                if (fareComponents[i].type.toLowerCase() == "totalfare") {
+                                    policy.penalty.totalFare = fareComponents[i].money;
+                                }
+                            }
+                        }
+                        policy.isSameDay = policy.window.start.date == policy.window.end.date;
+                    });
+
+                    return policies;
+                },
+
                 /*
                  * Translate plicies to make them policy component compatible
                 */
@@ -391,7 +403,6 @@
                 */
                 onAddCartError: function (e) {
                     this.$.fareDetails.error = true;
-                    this._showPolicyError = true;
                 },
 
                 /*
