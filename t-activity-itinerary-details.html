@@ -77,7 +77,8 @@
                 <div class="collapse-content section-small font-14 primary-text">
                     <div class="margin-bottom">[[selectedOption.name]]</div>
                     <div class="margin-bottom-medium">[[selectedOption.selectedDateTime.date]]</div>
-                    <t-policy 
+                    <t-policy
+                        id="policy"
                         label="Policy"
                         show-other-policies
                         other-policies-label="Cancellation Policies"
@@ -179,7 +180,7 @@
                 * <p>fires `policy-click` event</p>
                 */
                 _policyClick: function () {
-                    this.fire('policy-click', { itineraryId: this.itinerary.id });
+                    this.$.policy.initiatePolicyCall();
                 },
 
                 /*
